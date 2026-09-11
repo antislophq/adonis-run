@@ -12,21 +12,14 @@ import { appendFileSync, writeFileSync } from 'node:fs'
 import { setTimeout } from 'node:timers/promises'
 import app from '@adonisjs/core/services/app'
 import config from '@adonisjs/core/services/config'
-import logger from '@adonisjs/core/services/logger'
 
 const record = (event) => appendFileSync(app.makeURL('events.jsonl'), JSON.stringify(event) + '\\n')
 record('script:start')
-const service = await app.container.make('fixture.service')
 await setTimeout(25)
 writeFileSync(app.makeURL('result.json'), JSON.stringify({
   argv: process.argv,
-  url: import.meta.url,
-  cwd: process.cwd(),
   ready: app.isReady,
-  environment: app.getEnvironment(),
   config: config.get('fixture.message'),
-  loggerAvailable: typeof logger.info === 'function',
-  service,
 }))
 record('script:end')
 `
@@ -44,8 +37,6 @@ export async function createFixture(t, scripts = { 'scripts/capture.js': capture
   await writeFile(path.join(appRoot, 'preload.js'), `
 import { appendFileSync } from 'node:fs'
 import app from '@adonisjs/core/services/app'
-const service = await app.container.make('fixture.service')
-service.preloaded = true
 appendFileSync(app.makeURL('events.jsonl'), JSON.stringify('preload') + '\\n')
 `)
   for (const [name, source] of Object.entries(scripts)) {
@@ -56,7 +47,6 @@ appendFileSync(app.makeURL('events.jsonl'), JSON.stringify('preload') + '\\n')
 
   return {
     appRoot,
-    cwd,
     async run(args, { nodeArgs = [] } = {}) {
       const child = spawn(process.execPath, [...nodeArgs, bootstrap, appRoot, ...args], {
         cwd,
@@ -97,8 +87,6 @@ appendFileSync(app.makeURL('events.jsonl'), JSON.stringify('preload') + '\\n')
       const result = await readOptional('result.json')
       return {
         status,
-        stdout,
-        stderr,
         output,
         events: events ? events.trim().split('\n').map((line) => JSON.parse(line)) : [],
         result: result ? JSON.parse(result) : undefined,

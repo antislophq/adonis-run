@@ -1,6 +1,4 @@
-
 import { appendFileSync } from 'node:fs'
-import { setTimeout } from 'node:timers/promises'
 import { pathToFileURL } from 'node:url'
 import { IgnitorFactory } from '@adonisjs/core/factories'
 
@@ -9,26 +7,15 @@ const argv = process.argv.slice(3)
 const record = (event) => appendFileSync(new URL('events.jsonl', appRoot), `${JSON.stringify(event)}\n`)
 
 class FixtureProvider {
-  constructor(app) {
-    this.app = app
-  }
-
   register() {
     record('register')
-    this.app.container.singleton('fixture.service', () => ({ booted: false, ready: false }))
   }
 
-  async boot() {
-    await setTimeout(10)
-    const service = await this.app.container.make('fixture.service')
-    service.booted = true
+  boot() {
     record('boot')
   }
 
-  async ready() {
-    await setTimeout(10)
-    const service = await this.app.container.make('fixture.service')
-    service.ready = true
+  ready() {
     record('ready')
   }
 
