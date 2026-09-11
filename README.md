@@ -11,22 +11,23 @@ Read more here: [Adding rails runner to AdonisJS](https://rohitpaulk.com/article
 ## Install
 
 ```sh
-npm install @antislop/adonis-run
-node ace configure @antislop/adonis-run
+node ace add @antislop/adonis-run
 ```
 
-The configure command registers the package's `run` command in `adonisrc.ts`. Alternatively, register it manually by adding this entry to your existing `commands` array:
+This installs the package and registers its `run` command in `adonisrc.ts`:
 
 ```ts
 commands: [
-  () => import('@adonisjs/core/commands'),
+  // ... your existing commands
+
+  // This will be added:
   () => import('@antislop/adonis-run/commands'),
 ],
 ```
 
 ## Usage
 
-Invoke a script of your choice like this:
+Run a script like this:
 
 ```sh
 node ace run scripts/release.ts
