@@ -1,0 +1,46 @@
+{
+  "name": "@antislop/adonis-run",
+  "version": "0.1.0",
+  "description": "Run scripts with your AdonisJS application booted, like rails runner.",
+  "keywords": [
+    "adonisjs",
+    "ace",
+    "runner",
+    "scripts",
+    "rails-runner"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./build/configure.js",
+    "./commands": "./build/commands/main.js",
+    "./commands/run": "./build/commands/run.js",
+    "./configure": "./build/configure.js"
+  },
+  "files": [
+    "build"
+  ],
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test tests/*.test.js",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm test"
+  },
+  "peerDependencies": {
+    "@adonisjs/core": "^6.0.0 || ^7.0.0"
+  },
+  "devDependencies": {
+    "@adonisjs/assembler": "^8.5.1",
+    "@adonisjs/core": "^7.5.0",
+    "@poppinss/ts-exec": "^1.4.4",
+    "@types/node": "^24.0.0",
+    "typescript": "~5.9.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

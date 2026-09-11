@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        adonis: [6, 7]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Install AdonisJS 6 compatibility dependencies
+        if: matrix.adonis == 6
+        run: npm install --no-save --package-lock=false @adonisjs/core@6 @adonisjs/assembler@7
+      - run: npm test
+      - run: npm pack --dry-run
